@@ -42,47 +42,61 @@ if(!class_exists('acf_field_icon_picker') ) :
 
             $this->svgs = array();
 
-            $files = $this->find_all_files($this->path);
-
+            $this->processSvgFiles($this->path, [$this, 'addIcon']);
             parent::__construct();
         }
-
-        public function find_all_files($dir)
+        function createIcon(string $filePath) : Array
         {
+            $explodedDir = explode('/', $filePath);
+            $stripedDir = end($explodedDir);
+            $fileName = explode('.', $stripedDir)[0];
 
-            $root = scandir($dir);
-
-            foreach($root as $value)
-
-            {
-
-                if($value === '.' || $value === '..') {continue;
-                }
-
-                if(is_file("$dir/$value")) {$result[]="$dir/$value";continue;
-                }
-
-                foreach($this->find_all_files("$dir/$value") as $value)
-
-                {
-
-                    if(pathinfo($value, PATHINFO_EXTENSION) == 'svg' ) {
-                        $exploded = explode('.', $value);
-                        $icon = array(
-                        'name' => $exploded[0],
-                        'icon' => $value
-                        );
-                        array_push($this->svgs, $icon);
-                    }
-
-                }
-
-            }
-
-            return $result;
-
+            return array(
+            'name' => $fileName,
+            'icon' => $filePath,
+            );
+        }
+        function addIcon($filePath) : void
+        {
+            array_push($this->svgs, $this->createIcon($filePath));
         }
 
+
+        function processSvgFiles($path, $callback)
+        {
+            // Open the directory
+            $dir = opendir($path);
+        
+            // Loop through the directory
+            while (($file = readdir($dir)) !== false) {
+                // Skip ".", "..", and hidden files/directories
+                if ($file[0] == '.') {
+                    continue;
+                }
+        
+                // Build the full filepath
+                $fullPath = $path . '/' . $file;
+        
+                // If it's a directory, recurse into it
+                if (is_dir($fullPath)) {
+                    $this->processSvgFiles($fullPath, $callback);
+                } else {
+                    // If it's an SVG file, call the callback function
+                    if (pathinfo($fullPath, PATHINFO_EXTENSION) === 'svg') {
+                        // Calculate the relative filepath
+                        $relativePath = ltrim(str_replace(realpath($this->path), '', realpath($fullPath)), '/');
+                        
+                        
+                        // Call the callback function
+                        call_user_func($callback, $relativePath);
+                    }
+                }
+            }
+        
+            // Close the directory
+            closedir($dir);
+        }
+        
         function render_field( $field )
         {
             $input_icon = $field['value'] != "" ? $field['value'] : $field['initial_value'];
