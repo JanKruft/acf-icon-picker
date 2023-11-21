@@ -42,7 +42,7 @@ if(!class_exists('acf_field_icon_picker') ) :
 
             $this->svgs = array();
 
-            $files = find_all_files($this->path);
+            $files = $this->find_all_files($this->path);
 
             parent::__construct();
         }
