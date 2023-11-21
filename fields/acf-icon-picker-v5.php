@@ -62,11 +62,11 @@ if(!class_exists('acf_field_icon_picker') ) :
                 if(is_file("$dir/$value")) {$result[]="$dir/$value";continue;
                 }
 
-                foreach(find_all_files("$dir/$value") as $value)
+                foreach($this->find_all_files("$dir/$value") as $value)
 
                 {
 
-                    if(pathinfo($file, PATHINFO_EXTENSION) == 'svg' ) {
+                    if(pathinfo($value, PATHINFO_EXTENSION) == 'svg' ) {
                         $exploded = explode('.', $file);
                         $icon = array(
                         'name' => $exploded[0],
