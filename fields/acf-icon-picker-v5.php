@@ -67,10 +67,10 @@ if(!class_exists('acf_field_icon_picker') ) :
                 {
 
                     if(pathinfo($value, PATHINFO_EXTENSION) == 'svg' ) {
-                        $exploded = explode('.', $file);
+                        $exploded = explode('.', $value);
                         $icon = array(
                         'name' => $exploded[0],
-                        'icon' => $file
+                        'icon' => $value
                         );
                         array_push($this->svgs, $icon);
                     }
