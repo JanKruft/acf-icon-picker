@@ -47,9 +47,7 @@ if(!class_exists('acf_field_icon_picker') ) :
         }
         function createIcon(string $filePath) : Array
         {
-            $explodedDir = explode('/', $filePath);
-            $stripedDir = end($explodedDir);
-            $fileName = explode('.', $stripedDir)[0];
+            $fileName = explode('.', $filePath)[0];
 
             return array(
             'name' => $fileName,
